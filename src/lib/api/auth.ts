@@ -14,7 +14,7 @@ export interface RegisterData {
 }
 
 export async function loginUser(login: string, password: string) : Promise<TokenResponse> {
-    const response = await api.post("/auth/login", {
+    const response = await api.post("/api/login", {
         login,
         password
     })
@@ -22,12 +22,12 @@ export async function loginUser(login: string, password: string) : Promise<Token
 }
 
 export async function registerUser(data: RegisterData) : Promise<string> {
-    const response = await api.post("/auth/register", data)
+    const response = await api.post("/api/register", data)
     return response.data
 }
 
 export async function refreshAccessToken(refreshToken: string) : Promise<TokenResponse> {
-    const response = await api.post<TokenResponse>("/auth/refresh", {
+    const response = await api.post<TokenResponse>("/api/refresh", {
         refreshToken
     });
     return response.data
