@@ -140,8 +140,10 @@ function FeatureCards() {
 export default function AuthPage() {
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [displayName, setDisplayName] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const isSignup = mode === "signup";
@@ -201,35 +203,71 @@ export default function AuthPage() {
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
                     {isSignup && (
-                        <Input
-                            label="Display Name"
-                            placeholder="Your trader name"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                        />
+                        <>
+                            <Input
+                                label="Email"
+                                type="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <div style={{ display: "flex", gap: 12 }}>
+                                <div style={{ flex: 1 }}>
+                                    <Input
+                                        label="First Name"
+                                        placeholder="John"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <Input
+                                        label="Last Name"
+                                        placeholder="Doe"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <Input
+                                label="Username"
+                                placeholder="Your trader name"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            <Input
+                                label="Password"
+                                type="password"
+                                placeholder="••••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <Input
+                                label="Confirm Password"
+                                type="password"
+                                placeholder="••••••••••"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                        </>
                     )}
-                    <Input
-                        label="Email"
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Input
-                        label="Password"
-                        type="password"
-                        placeholder="••••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    {isSignup && (
-                        <Input
-                            label="Confirm Password"
-                            type="password"
-                            placeholder="••••••••••"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
+                    {!isSignup && (
+                        <>
+                            <Input
+                                label="Username / Email"
+                                type="text"
+                                placeholder="Username / Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <Input
+                                label="Password"
+                                type="password"
+                                placeholder="••••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </>
                     )}
 
                     {!isSignup && (
