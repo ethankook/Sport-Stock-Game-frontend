@@ -1,16 +1,16 @@
 "use client"
 
-import {useAuth} from "@/lib/auth/auth-context";
-import {useRouter} from "next/navigation";
-import {useEffect} from "react";
+import { useAuth } from "@/lib/auth/auth-context";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export function AuthGuard({children}: {children: React.ReactNode}) {
-    const {isAuthenticated, isLoading} = useAuth();
+export function AuthGuard({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!isAuthenticated && !isLoading) {
-            router.replace("/login");
+            router.replace("/auth");
         }
     }, [isAuthenticated, isLoading, router]);
 

@@ -1,22 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { colors } from "@/lib/theme";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/auth/auth-context";
 
-// ─── Input ─────────────────────────────────────────────────────────────────
+// Schemas 
+const loginSchema = z.object({
+    loginId: z.string().min(1, "Required"),
+    password: z.string().min(1, "Required"),
+});
+
+const signupSchema = z.object({
+    email: z.email("Invalid email address"),
+    firstName: z.string().min(1, "Required"),
+    lastName: z.string().min(1, "Required"),
+    username: z.string().min(5, "Username must be at least 5 characters"),
+    password: z.string().min(5, "Password must be at least 5 characters"),
+    confirmPassword: z.string(),
+}).refine((d) => d.password === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+type LoginFields = z.infer<typeof loginSchema>;
+type SignupFields = z.infer<typeof signupSchema>;
+
+// Input 
 function Input({
     label,
     type = "text",
     placeholder,
-    value,
-    onChange,
+    error,
+    ...props
 }: {
     label: string;
     type?: string;
     placeholder: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
+    error?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
     const [focused, setFocused] = useState(false);
 
     return (
@@ -38,10 +63,9 @@ function Input({
             <input
                 type={type}
                 placeholder={placeholder}
-                value={value}
-                onChange={onChange}
                 onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
+                onBlur={(e) => { setFocused(false); props.onBlur?.(e); }}
+                {...props}
                 style={{
                     boxSizing: "border-box" as const,
                     width: "100%",
@@ -59,6 +83,9 @@ function Input({
                     fontFamily: "var(--font-sans)",
                 }}
             />
+            {error && (
+                <p style={{ margin: "4px 0 0", fontSize: 11, color: colors.error, fontFamily: "var(--font-sans)" }}>{error}</p>
+            )}
         </div>
     );
 }
@@ -139,19 +166,31 @@ function FeatureCards() {
 // ─── Main Auth Page ────────────────────────────────────────────────────────
 export default function AuthPage() {
     const [mode, setMode] = useState<"login" | "signup">("login");
-    const [email, setEmail] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const { login, register } = useAuth();
+
+    const loginForm = useForm<LoginFields>({ resolver: zodResolver(loginSchema) });
+    const signupForm = useForm<SignupFields>({ resolver: zodResolver(signupSchema) });
+
+    const onLogin = loginForm.handleSubmit(async (data) => {
+        try {
+            await login(data.loginId, data.password);
+            toast.success("Logged in successfully!");
+        } catch {
+            toast.error("Invalid credentials, please try again.");
+        }
+    });
+
+    const onSignup = signupForm.handleSubmit(async (data) => {
+        try {
+            const { confirmPassword, ...registerData } = data;
+            await register(registerData);
+            toast.success("Registered successfully!");
+        } catch {
+            toast.error("Registration failed, please try again.");
+        }
+    });
 
     const isSignup = mode === "signup";
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // TODO: wire to backend
-    };
 
     return (
         <>
@@ -200,78 +239,29 @@ export default function AuthPage() {
                     ))}
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit}>
-                    {isSignup && (
-                        <>
-                            <Input
-                                label="Email"
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <div style={{ display: "flex", gap: 12 }}>
-                                <div style={{ flex: 1 }}>
-                                    <Input
-                                        label="First Name"
-                                        placeholder="John"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                    />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <Input
-                                        label="Last Name"
-                                        placeholder="Doe"
-                                        value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <Input
-                                label="Username"
-                                placeholder="Your trader name"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                            <Input
-                                label="Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <Input
-                                label="Confirm Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </>
-                    )}
-                    {!isSignup && (
-                        <>
-                            <Input
-                                label="Username / Email"
-                                type="text"
-                                placeholder="Username / Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <Input
-                                label="Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </>
-                    )}
+                {/* Login Form */}
+                {!isSignup && (
+                    <form onSubmit={onLogin}>
+                        <Input
+                            label="Username / Email"
+                            placeholder="Username / Email"
 
-                    {!isSignup && (
-                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -4, marginBottom: 16 }}>
+                            error={loginForm.formState.errors.loginId?.message}
+                            {...loginForm.register("loginId")}
+                        />
+                        <Input
+                            label="Password"
+                            type="password"
+                            placeholder="••••••••••"
+
+                            error={loginForm.formState.errors.password?.message}
+
+                            {...loginForm.register("password")}
+                        />
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "flex-end", marginTop: -4, marginBottom: 16
+                        }}>
                             <button
                                 type="button"
                                 style={{
@@ -281,36 +271,140 @@ export default function AuthPage() {
                                     background: "none",
                                     border: "none",
                                     cursor: "pointer",
-                                    fontFamily: "var(--font-sans)",
+                                    fontFamily:
+                                        "var(--font-sans)",
                                 }}
                             >
                                 Forgot password?
                             </button>
                         </div>
-                    )}
+                        <button
+                            type="submit"
 
-                    <button
-                        type="submit"
-                        style={{
-                            width: "100%",
-                            padding: "14px 0",
-                            borderRadius: 12,
-                            fontSize: 14,
-                            fontWeight: 700,
-                            letterSpacing: "0.02em",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer",
-                            marginTop: isSignup ? 8 : 0,
-                            background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentDark})`,
-                            boxShadow: `0 4px 16px ${colors.accentGlow}`,
-                            transition: "all 0.2s",
-                            fontFamily: "var(--font-sans)",
-                        }}
-                    >
-                        {isSignup ? "Create Account" : "Log In"}
-                    </button>
-                </form>
+                            disabled={loginForm.formState.isSubmitting}
+                            style={{
+                                width: "100%",
+                                padding: "14px 0",
+                                borderRadius: 12,
+                                fontSize: 14,
+                                fontWeight: 700,
+                                letterSpacing: "0.02em",
+                                color: "white",
+                                border: "none",
+                                cursor:
+                                    loginForm.formState.isSubmitting ? "not-allowed" : "pointer",
+                                opacity:
+                                    loginForm.formState.isSubmitting ? 0.7 : 1,
+                                background:
+                                    `linear-gradient(135deg, ${colors.accent},
+  ${colors.accentDark})`,
+                                boxShadow: `0 4px 16px 
+  ${colors.accentGlow}`,
+                                transition: "all 0.2s",
+                                fontFamily:
+                                    "var(--font-sans)",
+                            }}
+                        >
+                            {loginForm.formState.isSubmitting
+                                ? "Logging in..." : "Log In"}
+                        </button>
+                    </form>
+                )}
+
+                {/* Signup Form */}
+                {isSignup && (
+                    <form onSubmit={onSignup}>
+                        <Input
+                            label="Email"
+                            type="email"
+                            placeholder="you@example.com"
+
+                            error={signupForm.formState.errors.email?.message}
+                            {...signupForm.register("email")}
+                        />
+                        <div style={{
+                            display: "flex", gap: 12
+                        }}>
+                            <div style={{ flex: 1 }}>
+                                <Input
+                                    label="First Name"
+                                    placeholder="John"
+
+                                    error={signupForm.formState.errors.firstName?.message}
+
+                                    {...signupForm.register("firstName")}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <Input
+                                    label="Last Name"
+                                    placeholder="Doe"
+
+                                    error={signupForm.formState.errors.lastName?.message}
+
+                                    {...signupForm.register("lastName")}
+                                />
+                            </div>
+                        </div>
+                        <Input
+                            label="Username"
+                            placeholder="Your trader name"
+
+                            error={signupForm.formState.errors.username?.message}
+
+                            {...signupForm.register("username")}
+                        />
+                        <Input
+                            label="Password"
+                            type="password"
+                            placeholder="••••••••••"
+
+                            error={signupForm.formState.errors.password?.message}
+
+                            {...signupForm.register("password")}
+                        />
+                        <Input
+                            label="Confirm Password"
+                            type="password"
+                            placeholder="••••••••••"
+
+                            error={signupForm.formState.errors.confirmPassword?.message}
+
+                            {...signupForm.register("confirmPassword")}
+                        />
+                        <button
+                            type="submit"
+
+                            disabled={signupForm.formState.isSubmitting}
+                            style={{
+                                width: "100%",
+                                padding: "14px 0",
+                                borderRadius: 12,
+                                fontSize: 14,
+                                fontWeight: 700,
+                                letterSpacing: "0.02em",
+                                color: "white",
+                                border: "none",
+                                cursor:
+                                    signupForm.formState.isSubmitting ? "not-allowed" : "pointer",
+                                opacity:
+                                    signupForm.formState.isSubmitting ? 0.7 : 1,
+                                marginTop: 8,
+                                background:
+                                    `linear-gradient(135deg, ${colors.accent},
+  ${colors.accentDark})`,
+                                boxShadow: `0 4px 16px 
+  ${colors.accentGlow}`,
+                                transition: "all 0.2s",
+                                fontFamily:
+                                    "var(--font-sans)",
+                            }}
+                        >
+                            {signupForm.formState.isSubmitting
+                                ? "Creating account..." : "Create Account"}
+                        </button>
+                    </form>
+                )}
 
                 <SocialLogins />
             </div>

@@ -15,6 +15,7 @@ export const colors = {
     posWR: "#5ba8ff",
     posTE: "#c4a0ff",
     gold: "#f5c542",
+    error: "rgba(239,68,68,0.9)",
 } as const;
 
 export function positionColor(pos: string): string {
