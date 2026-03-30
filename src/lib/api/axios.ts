@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
+const AUTH_BYPASS_PATHS = new Set(["/api/login", "/api/register", "/api/refresh"]);
 
 let accessToken: string | null = null;
 
@@ -52,11 +53,23 @@ export function setOnRefreshFailure(callback: () => void) : void {
     onRefreshFailure = callback;
 }
 
+function shouldBypassAuthRefresh(url?: string) : boolean {
+    if (!url) {
+        return false;
+    }
+
+    return AUTH_BYPASS_PATHS.has(url);
+}
+
 api.interceptors.response.use((response) => response,
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status !== 401 || originalRequest._retry) {
+        if (
+            error.response?.status !== 401 ||
+            originalRequest._retry ||
+            shouldBypassAuthRefresh(originalRequest?.url)
+        ) {
             return Promise.reject(error);
         }
 
