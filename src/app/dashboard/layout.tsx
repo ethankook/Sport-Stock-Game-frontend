@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { colors } from "@/lib/theme";
 import { TickerBar } from "@/components/layout/TickerBar";
+import { AuthGuard } from "@/lib/auth/auth-guard";
+import { useAuth } from "@/lib/auth/auth-context";
 
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const labelStyle: React.CSSProperties = {
@@ -250,10 +252,11 @@ function JoinModal({ onClose }: { onClose: () => void }) {
     );
 }
 
-// ─── Layout ────────────────────────────────────────────────────────────────
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+// ─── Layout (inner) ───────────────────────────────────────────────────────
+function DashboardContent({ children }: { children: React.ReactNode }) {
     const [showCreate, setShowCreate] = useState(false);
     const [showJoin, setShowJoin] = useState(false);
+    const { user, logout } = useAuth();
 
     return (
         <div style={{ minHeight: "100vh", background: colors.bg, fontFamily: "var(--font-sans)" }}>
@@ -267,10 +270,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </svg>
                     </div>
                     <span style={{ fontSize: 17, fontWeight: 700, color: colors.text, letterSpacing: "-0.02em" }}>SportStocks</span>
+                    {user && (
+                        <span style={{ fontSize: 13, color: colors.textMuted, marginLeft: 8 }}>
+                            Welcome, <span style={{ color: colors.accent, fontWeight: 600 }}>{user.username}</span>
+                        </span>
+                    )}
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={() => setShowCreate(true)} style={{ padding: "7px 18px", borderRadius: 9, fontSize: 13, fontWeight: 700, border: "none", cursor: "pointer", background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentDark})`, boxShadow: `0 2px 12px ${colors.accentGlow}`, color: "white", fontFamily: "var(--font-sans)" }}>Create</button>
                     <button onClick={() => setShowJoin(true)} style={{ padding: "7px 18px", borderRadius: 9, fontSize: 13, fontWeight: 600, background: colors.surfaceLight, border: `1.5px solid ${colors.border}`, color: colors.text, cursor: "pointer", fontFamily: "var(--font-sans)" }}>Join</button>
+                    <button onClick={logout} style={{ padding: "7px 18px", borderRadius: 9, fontSize: 13, fontWeight: 600, background: "none", border: `1.5px solid ${colors.border}`, color: colors.textMuted, cursor: "pointer", fontFamily: "var(--font-sans)", transition: "all 0.2s" }}>Log Out</button>
                 </div>
             </div>
 
@@ -283,5 +292,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {showCreate && <CreateModal onClose={() => setShowCreate(false)} />}
             {showJoin && <JoinModal onClose={() => setShowJoin(false)} />}
         </div>
+    );
+}
+
+// ─── Layout ────────────────────────────────────────────────────────────────
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <AuthGuard>
+            <DashboardContent>{children}</DashboardContent>
+        </AuthGuard>
     );
 }

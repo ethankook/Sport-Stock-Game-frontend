@@ -15,6 +15,7 @@ import { setAccessToken, setOnRefreshFailure } from "@/lib/api/axios";
 interface User {
     email: string;
     userId: number;
+    username: string;
 }
 
 interface AuthContextValue {
@@ -32,7 +33,7 @@ function decodeJwtPayload(token: string): User {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const payload = JSON.parse(atob(base64));
-    return { email: payload.sub, userId: payload.userId };
+    return { email: payload.sub, userId: payload.userId, username: payload.username };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

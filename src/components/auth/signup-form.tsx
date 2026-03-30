@@ -9,6 +9,7 @@ import { colors } from "@/lib/theme";
 import { useAuth } from "@/lib/auth/auth-context";
 import { AuthInput } from "@/components/auth/auth-input";
 import { AxiosError } from "axios";
+import type { AuthErrorResponse } from "@/lib/api/auth";
 
 const signupSchema = z
     .object({
@@ -33,6 +34,7 @@ export function SignupForm() {
     const {
         register,
         handleSubmit,
+        setError,
         formState: { errors },
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
@@ -49,11 +51,24 @@ export function SignupForm() {
                 password: data.password,
             });
         } catch (error) {
-            if (error instanceof AxiosError && error.response?.status === 409) {
-                toast.error("Email or username already in use.");
-            } else {
-                toast.error("Something went wrong. Please try again.");
+            if (error instanceof AxiosError) {
+                const response = error.response?.data as AuthErrorResponse | undefined;
+
+                if (response?.fieldErrors?.email) {
+                    setError("email", { type: "server", message: response.fieldErrors.email });
+                }
+
+                if (response?.fieldErrors?.username) {
+                    setError("username", { type: "server", message: response.fieldErrors.username });
+                }
+
+                if (response?.code === "REGISTRATION_CONFLICT") {
+                    toast.error(response.message ?? "Please fix the highlighted fields.");
+                    return;
+                }
             }
+
+            toast.error("Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
         }

@@ -13,6 +13,13 @@ export interface RegisterData {
     lastName: string;
 }
 
+export interface AuthErrorResponse {
+    status?: number;
+    code?: string;
+    message?: string;
+    fieldErrors?: Partial<Record<"email" | "username" | "login" | "password", string>>;
+}
+
 export async function loginUser(login: string, password: string) : Promise<TokenResponse> {
     const response = await api.post("/api/login", {
         login,

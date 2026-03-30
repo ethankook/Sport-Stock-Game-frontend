@@ -9,6 +9,7 @@ import {AxiosError} from "axios";
 import {toast} from "sonner";
 import {AuthInput} from "@/components/auth/auth-input";
 import {colors} from "@/lib/theme";
+import type {AuthErrorResponse} from "@/lib/api/auth";
 
 const loginSchema = z.object({
     login: z.string().min(1, { message: "Email or username is required" }),
@@ -24,6 +25,7 @@ export function LoginForm() {
     const {
         register,
         handleSubmit,
+        setError,
         formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -34,11 +36,18 @@ export function LoginForm() {
         try {
             await login(data.login, data.password);
         } catch (error) {
-            if (error instanceof AxiosError && error.response?.status === 401) {
-                toast.error("Invalid credentials. Please try again.");
-            } else {
-                toast.error("Something went wrong. Please try again.");
+            if (error instanceof AxiosError) {
+                const response = error.response?.data as AuthErrorResponse | undefined;
+
+                if (response?.code === "INVALID_CREDENTIALS" || error.response?.status === 401) {
+                    const message = response?.message ?? "Incorrect username/email or password.";
+                    setError("login", { type: "server", message });
+                    toast.error(message);
+                    return;
+                }
             }
+
+            toast.error("Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
