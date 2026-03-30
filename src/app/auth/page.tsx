@@ -2,66 +2,8 @@
 
 import { useState } from "react";
 import { colors } from "@/lib/theme";
-
-// ─── Input ─────────────────────────────────────────────────────────────────
-function Input({
-    label,
-    type = "text",
-    placeholder,
-    value,
-    onChange,
-}: {
-    label: string;
-    type?: string;
-    placeholder: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-    const [focused, setFocused] = useState(false);
-
-    return (
-        <div style={{ marginBottom: 16 }}>
-            <label
-                style={{
-                    display: "block",
-                    fontSize: 11,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase" as const,
-                    fontWeight: 600,
-                    color: colors.textMuted,
-                    fontFamily: "var(--font-mono)",
-                    marginBottom: 6,
-                }}
-            >
-                {label}
-            </label>
-            <input
-                type={type}
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                style={{
-                    boxSizing: "border-box" as const,
-                    width: "100%",
-                    padding: "12px 16px",
-                    borderRadius: 12,
-                    fontSize: 14,
-                    outline: "none",
-                    background: colors.bg,
-                    border: focused
-                        ? "1.5px solid rgba(62,207,142,0.4)"
-                        : `1.5px solid ${colors.border}`,
-                    boxShadow: focused ? "0 0 0 3px rgba(62,207,142,0.08)" : "none",
-                    color: colors.text,
-                    transition: "all 0.2s",
-                    fontFamily: "var(--font-sans)",
-                }}
-            />
-        </div>
-    );
-}
+import { LoginForm } from "@/components/auth/login-form";
+import { SignupForm } from "@/components/auth/signup-form";
 
 // ─── Social Buttons ────────────────────────────────────────────────────────
 function SocialLogins() {
@@ -139,19 +81,6 @@ function FeatureCards() {
 // ─── Main Auth Page ────────────────────────────────────────────────────────
 export default function AuthPage() {
     const [mode, setMode] = useState<"login" | "signup">("login");
-    const [email, setEmail] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
-    const isSignup = mode === "signup";
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // TODO: wire to backend
-    };
 
     return (
         <>
@@ -201,116 +130,7 @@ export default function AuthPage() {
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit}>
-                    {isSignup && (
-                        <>
-                            <Input
-                                label="Email"
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <div style={{ display: "flex", gap: 12 }}>
-                                <div style={{ flex: 1 }}>
-                                    <Input
-                                        label="First Name"
-                                        placeholder="John"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                    />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <Input
-                                        label="Last Name"
-                                        placeholder="Doe"
-                                        value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <Input
-                                label="Username"
-                                placeholder="Your trader name"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                            <Input
-                                label="Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <Input
-                                label="Confirm Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </>
-                    )}
-                    {!isSignup && (
-                        <>
-                            <Input
-                                label="Username / Email"
-                                type="text"
-                                placeholder="Username / Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <Input
-                                label="Password"
-                                type="password"
-                                placeholder="••••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </>
-                    )}
-
-                    {!isSignup && (
-                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -4, marginBottom: 16 }}>
-                            <button
-                                type="button"
-                                style={{
-                                    fontSize: 12,
-                                    fontWeight: 500,
-                                    color: colors.accent,
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    fontFamily: "var(--font-sans)",
-                                }}
-                            >
-                                Forgot password?
-                            </button>
-                        </div>
-                    )}
-
-                    <button
-                        type="submit"
-                        style={{
-                            width: "100%",
-                            padding: "14px 0",
-                            borderRadius: 12,
-                            fontSize: 14,
-                            fontWeight: 700,
-                            letterSpacing: "0.02em",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer",
-                            marginTop: isSignup ? 8 : 0,
-                            background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentDark})`,
-                            boxShadow: `0 4px 16px ${colors.accentGlow}`,
-                            transition: "all 0.2s",
-                            fontFamily: "var(--font-sans)",
-                        }}
-                    >
-                        {isSignup ? "Create Account" : "Log In"}
-                    </button>
-                </form>
+                {mode === "login" ? <LoginForm /> : <SignupForm />}
 
                 <SocialLogins />
             </div>
