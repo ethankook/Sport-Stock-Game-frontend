@@ -25,6 +25,15 @@ body {
   color: #4e5268;
 }
 
+@keyframes tickerScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
