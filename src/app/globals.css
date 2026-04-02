@@ -9,6 +9,38 @@
   --font-mono: "IBM Plex Mono", "SF Mono", monospace;
 }
 
+@theme {
+  --color-sidebar: #1e2235;
+  --color-sidebar-foreground: #e2e4ed;
+  --color-sidebar-primary: #3ecf8e;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #262a40;
+  --color-sidebar-accent-foreground: #e2e4ed;
+  --color-sidebar-border: rgba(255, 255, 255, 0.06);
+  --color-sidebar-ring: #3ecf8e;
+}
+
+/* Sidebar theme overrides */
+[data-sidebar="sidebar"] {
+  background-color: #1e2235;
+  color: #e2e4ed;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-sidebar="menu-button"]:hover,
+[data-sidebar="menu-button"][data-active="true"] {
+  background-color: #262a40;
+  color: #e2e4ed;
+}
+
+[data-sidebar="group-label"] {
+  color: #7f849b;
+}
+
+[data-sidebar="separator"] {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
 *,
 *::before,
 *::after {

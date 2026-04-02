@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        {children}
         <Toaster theme="dark" position="top-center" />
       </body>
     </html>

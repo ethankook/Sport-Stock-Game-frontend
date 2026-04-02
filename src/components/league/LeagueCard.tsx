@@ -13,13 +13,14 @@ export interface League {
   portfolioChange?: number;
 }
 
+// Used on dashboard page -> Navigates to league-specific page
 export function LeagueCard({ league }: { league: League }) {
   const changePositive = (league.portfolioChange ?? 0) >= 0;
 
   return (
     <div
       onClick={() => {
-        // TODO: navigate to /dashboard/leagues/[leagueId]
+        // TODO: navigate to /portfolio
       }}
       style={{
         borderRadius: 16,
