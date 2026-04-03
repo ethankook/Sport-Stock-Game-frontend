@@ -5,18 +5,21 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  ArrowLeftRight,
   Trophy,
-  History,
   ChevronLeft,
+  Settings,
 } from "lucide-react";
 import { colors } from "@/lib/theme";
 
 const NAV_ITEMS = [
   { label: "Portfolio", icon: LayoutDashboard, href: "/portfolio" },
   { label: "Market", icon: Users, href: "/market" },
-  { label: "Standings", icon: Trophy, href: "/standings" }
+  { label: "Standings", icon: Trophy, href: "/standings" },
 ];
+
+// Must stay in sync with the layout header height
+export const HEADER_HEIGHT = 50;
+export const SIDEBAR_WIDTH = 260;
 
 interface AppSidebarProps {
   isOpen: boolean;
@@ -38,73 +41,98 @@ export function AppSidebar({
   return (
     <aside
       style={{
-        width: isOpen ? 240 : 0,
-        minWidth: isOpen ? 240 : 0,
+        width: isOpen ? SIDEBAR_WIDTH : 0,
         overflow: "hidden",
-        transition: "width 0.2s ease, min-width 0.2s ease",
+        transition: "width 0.2s ease",
         background: colors.surface,
         borderRight: `1px solid ${colors.border}`,
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        position: "sticky",
+        position: "fixed",
+        left: 0,
         top: 0,
+        zIndex: 20,
         flexShrink: 0,
       }}
     >
-      {/* Inner content — hidden when collapsed */}
       <div
         style={{
-          width: 240,
+          width: SIDEBAR_WIDTH,
           display: "flex",
           flexDirection: "column",
           height: "100%",
           overflow: "hidden",
         }}
       >
-        {/* Header */}
-        <div style={{ padding: "20px 16px 16px" }}>
+        {/* Top bar — aligns with the full-width layout header */}
+        <div
+          style={{
+            height: HEADER_HEIGHT,
+            display: "flex",
+            alignItems: "center",
+            padding: "0 18px",
+            borderBottom: `1px solid ${colors.border}`,
+            flexShrink: 0,
+          }}
+        >
           <Link
             href="/dashboard"
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 4,
-              fontSize: 11,
+              gap: 5,
+              fontSize: 12,
               color: colors.textMuted,
               textDecoration: "none",
-              marginBottom: 14,
               fontFamily: "var(--font-mono)",
-              letterSpacing: "0.06em",
+              letterSpacing: "0.05em",
             }}
           >
-            <ChevronLeft size={12} />
+            <ChevronLeft size={13} />
             All Leagues
           </Link>
+        </div>
+
+        {/* League info */}
+        <div style={{ padding: "18px 18px 14px" }}>
           <div
             style={{
-              fontSize: 15,
+              fontSize: 17,
               fontWeight: 700,
               color: colors.text,
               letterSpacing: "-0.02em",
               lineHeight: 1.3,
               whiteSpace: "nowrap",
+              marginBottom: 6,
             }}
           >
             {leagueName}
           </div>
+          {userName && (
+            <div
+              style={{
+                fontSize: 12,
+                color: colors.textMuted,
+                fontFamily: "var(--font-mono)",
+                marginBottom: 8,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {userName}
+            </div>
+          )}
           {rank !== undefined && (
             <div
               style={{
-                marginTop: 8,
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 6,
-                fontSize: 11,
+                fontSize: 12,
                 fontFamily: "var(--font-mono)",
                 color: colors.gold,
                 background: "rgba(245,197,66,0.1)",
-                padding: "3px 8px",
+                padding: "3px 10px",
                 borderRadius: 6,
                 whiteSpace: "nowrap",
               }}
@@ -115,12 +143,12 @@ export function AppSidebar({
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: colors.border, marginBottom: 8 }} />
+        <div style={{ height: 1, background: colors.border, margin: "0 18px 10px" }} />
 
         {/* Nav label */}
         <div
           style={{
-            padding: "0 16px 6px",
+            padding: "0 18px 8px",
             fontSize: 10,
             fontWeight: 700,
             letterSpacing: "0.1em",
@@ -134,7 +162,7 @@ export function AppSidebar({
         </div>
 
         {/* Nav items */}
-        <nav style={{ padding: "0 8px", flex: 1 }}>
+        <nav style={{ padding: "0 10px", flex: 1 }}>
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/portfolio"
@@ -147,11 +175,11 @@ export function AppSidebar({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 10,
-                  padding: "8px 10px",
-                  borderRadius: 8,
-                  marginBottom: 2,
-                  fontSize: 13,
+                  gap: 11,
+                  padding: "9px 12px",
+                  borderRadius: 9,
+                  marginBottom: 3,
+                  fontSize: 14,
                   fontWeight: isActive ? 600 : 500,
                   color: isActive ? colors.text : colors.textMuted,
                   background: isActive ? colors.surfaceLight : "transparent",
@@ -161,7 +189,7 @@ export function AppSidebar({
                 }}
               >
                 <item.icon
-                  size={15}
+                  size={16}
                   color={isActive ? colors.accent : colors.textMuted}
                   style={{ flexShrink: 0 }}
                 />
@@ -174,12 +202,13 @@ export function AppSidebar({
         {/* Footer */}
         <div
           style={{
-            padding: "16px",
+            padding: "16px 18px",
             borderTop: `1px solid ${colors.border}`,
           }}
         >
+          {/* Portfolio value */}
           {portfolioValue !== undefined && (
-            <div style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 14 }}>
               <div
                 style={{
                   fontSize: 10,
@@ -188,7 +217,7 @@ export function AppSidebar({
                   fontWeight: 600,
                   color: colors.textMuted,
                   fontFamily: "var(--font-mono)",
-                  marginBottom: 2,
+                  marginBottom: 3,
                   whiteSpace: "nowrap",
                 }}
               >
@@ -196,7 +225,7 @@ export function AppSidebar({
               </div>
               <div
                 style={{
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: 700,
                   color: colors.accent,
                   fontFamily: "var(--font-mono)",
@@ -207,18 +236,41 @@ export function AppSidebar({
               </div>
             </div>
           )}
+
+          {/* Settings link */}
+          <Link
+            href="/settings"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 0",
+              marginBottom: 10,
+              fontSize: 13,
+              fontWeight: 500,
+              color: colors.textMuted,
+              textDecoration: "none",
+              transition: "color 0.15s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <Settings size={15} color={colors.textMuted} style={{ flexShrink: 0 }} />
+            Settings
+          </Link>
+
+          {/* User row */}
           {userName && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div
                 style={{
-                  width: 28,
-                  height: 28,
+                  width: 30,
+                  height: 30,
                   borderRadius: "50%",
                   background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentDark})`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 700,
                   color: "white",
                   flexShrink: 0,
@@ -228,7 +280,7 @@ export function AppSidebar({
               </div>
               <span
                 style={{
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 600,
                   color: colors.text,
                   overflow: "hidden",

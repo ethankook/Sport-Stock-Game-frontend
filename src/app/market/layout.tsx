@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PanelLeftIcon } from "lucide-react";
 import { AppSidebar, SIDEBAR_WIDTH, HEADER_HEIGHT } from "@/components/layout/SideBar";
+import { TickerBar } from "@/components/layout/TickerBar";
 import { colors } from "@/lib/theme";
 
 // TODO: Replace with real league/user data from API or route params
@@ -13,7 +14,7 @@ const MOCK_LEAGUE = {
   portfolioValue: 14_820,
 };
 
-export default function PortfolioLayout({ children }: { children: React.ReactNode }) {
+export default function MarketLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
@@ -84,9 +85,12 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
           paddingTop: HEADER_HEIGHT,
           transition: "margin-left 0.2s ease",
           minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <main style={{ padding: "28px 32px" }}>{children}</main>
+        <TickerBar />
+        <main style={{ padding: "28px 32px", flex: 1 }}>{children}</main>
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import { PanelLeftIcon } from "lucide-react";
 import { AppSidebar, SIDEBAR_WIDTH, HEADER_HEIGHT } from "@/components/layout/SideBar";
 import { colors } from "@/lib/theme";
 
-// TODO: Replace with real league/user data from API or route params
 const MOCK_LEAGUE = {
   leagueName: "The Stock Exchange",
   userName: "Jonathan",
@@ -13,7 +12,7 @@ const MOCK_LEAGUE = {
   portfolioValue: 14_820,
 };
 
-export default function PortfolioLayout({ children }: { children: React.ReactNode }) {
+export default function StandingsLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
@@ -27,7 +26,6 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
     >
       <AppSidebar isOpen={sidebarOpen} {...MOCK_LEAGUE} />
 
-      {/* Full-width fixed header — sidebar (z-index 20) sits on top of it */}
       <header
         style={{
           position: "fixed",
@@ -77,7 +75,6 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
         </span>
       </header>
 
-      {/* Page content — offset below fixed header and right of sidebar */}
       <div
         style={{
           marginLeft: sidebarWidth,

@@ -1,7 +1,7 @@
 "use client";
 
 import { colors } from "@/lib/theme";
-import { LeagueCard, League } from "@/components/league/LeagueCard";
+import { LeagueCard, League } from "@/components/layout/LeagueCard";
 
 // TODO: Replace with real data from API
 const MOCK_LEAGUES: League[] = [
