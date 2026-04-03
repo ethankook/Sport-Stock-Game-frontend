@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { colors } from "@/lib/theme";
 
 export interface League {
@@ -15,13 +16,12 @@ export interface League {
 
 // Used on dashboard page -> Navigates to league-specific page
 export function LeagueCard({ league }: { league: League }) {
+  const router = useRouter();
   const changePositive = (league.portfolioChange ?? 0) >= 0;
 
   return (
     <div
-      onClick={() => {
-        // TODO: navigate to /portfolio
-      }}
+      onClick={() => router.push("/portfolio")}
       style={{
         borderRadius: 16,
         padding: 24,

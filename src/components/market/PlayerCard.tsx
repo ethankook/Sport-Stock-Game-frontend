@@ -47,7 +47,7 @@ function PlayerAvatar({ name, pos }: { name: string; pos: string }) {
   );
 }
 
-export function PlayerCard({ player }: { player: Player }) {
+export function PlayerCard({ player, onClick }: { player: Player; onClick?: () => void }) {
   const isUp = player.change >= 0;
   const posCol = positionColor(player.pos);
 
@@ -61,9 +61,10 @@ export function PlayerCard({ player }: { player: Player }) {
         display: "flex",
         flexDirection: "column",
         gap: 10,
-        transition: "border-color 0.15s",
+        transition: "border-color 0.15s, box-shadow 0.15s",
         cursor: "pointer",
       }}
+      onClick={onClick}
     >
       {/* Top row: position pill · #number · team */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

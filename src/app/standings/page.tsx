@@ -96,13 +96,11 @@ function TraderAvatar({ name }: { name: string }) {
 
 function SortBtn({
   label,
-  sortKey,
   active,
   dir,
   onClick,
 }: {
   label: string;
-  sortKey: SortKey;
   active: boolean;
   dir: SortDir;
   onClick: () => void;
@@ -311,7 +309,6 @@ export default function StandingsPage() {
             <div style={{ textAlign: "right" }}>
               <SortBtn
                 label="Record"
-                sortKey="record"
                 active={sortKey === "record"}
                 dir={sortDir}
                 onClick={() => handleSort("record")}
@@ -320,7 +317,6 @@ export default function StandingsPage() {
             <div style={{ textAlign: "right" }}>
               <SortBtn
                 label="Portfolio"
-                sortKey="portfolioValue"
                 active={sortKey === "portfolioValue"}
                 dir={sortDir}
                 onClick={() => handleSort("portfolioValue")}
