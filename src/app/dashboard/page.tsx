@@ -2,40 +2,7 @@
 
 import { colors } from "@/lib/theme";
 import { LeagueCard, League } from "@/components/layout/LeagueCard";
-
-// TODO: Replace with real data from API
-const MOCK_LEAGUES: League[] = [
-    {
-        id: "1",
-        name: "The Stock Exchange",
-        memberCount: 8,
-        maxMembers: 10,
-        season: "2025",
-        yourRank: 2,
-        portfolioValue: 12450.75,
-        portfolioChange: 4.2,
-    },
-    {
-        id: "2",
-        name: "Gridiron Traders",
-        memberCount: 12,
-        maxMembers: 12,
-        season: "2025",
-        yourRank: 5,
-        portfolioValue: 9870.30,
-        portfolioChange: -1.8,
-    },
-    {
-        id: "3",
-        name: "Sunday Stocks",
-        memberCount: 6,
-        maxMembers: 8,
-        season: "2025",
-        yourRank: 1,
-        portfolioValue: 15230.50,
-        portfolioChange: 7.1,
-    },
-];
+import { MOCK_LEAGUES } from "@/mock";
 
 export default function DashboardPage() {
     const leagues = MOCK_LEAGUES;

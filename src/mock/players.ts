@@ -1,4 +1,4 @@
-import type { Player } from "@/components/market/PlayerCard";
+import type { Player } from "@/types/market";
 
 export const MOCK_PLAYERS: Player[] = [
   { id: "p1",  name: "Patrick Mahomes",     pos: "QB", team: "KC",  number: 15, price: 142.50, change:  3.8, volume: 12_480, mktCap: 284_100 },

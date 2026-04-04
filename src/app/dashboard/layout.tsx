@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { colors } from "@/lib/theme";
 import { TickerBar } from "@/components/layout/TickerBar";
+import { MOCK_PUBLIC_LEAGUES } from "@/mock";
 
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const labelStyle: React.CSSProperties = {
@@ -128,14 +129,6 @@ function CreateModal({ onClose }: { onClose: () => void }) {
         </div>
     );
 }
-
-// ─── Mock public leagues for the join modal ────────────────────────────────
-const MOCK_PUBLIC_LEAGUES = [
-    { id: "p1", name: "Open Market League", members: 7, maxMembers: 12, season: "2025" },
-    { id: "p2", name: "Reddit Stock Traders", members: 15, maxMembers: 20, season: "2025" },
-    { id: "p3", name: "Casual Ballers", members: 3, maxMembers: 8, season: "2025" },
-    { id: "p4", name: "NFL Street Bets", members: 9, maxMembers: 10, season: "2025" },
-];
 
 // ─── Join League Modal ─────────────────────────────────────────────────────
 function JoinModal({ onClose }: { onClose: () => void }) {

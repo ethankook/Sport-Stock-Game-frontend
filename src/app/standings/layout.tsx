@@ -4,13 +4,7 @@ import { useState } from "react";
 import { PanelLeftIcon } from "lucide-react";
 import { AppSidebar, SIDEBAR_WIDTH, HEADER_HEIGHT } from "@/components/layout/SideBar";
 import { colors } from "@/lib/theme";
-
-const MOCK_LEAGUE = {
-  leagueName: "The Stock Exchange",
-  userName: "Jonathan",
-  rank: 2,
-  portfolioValue: 14_820,
-};
+import { MOCK_LEAGUE } from "@/mock/league";
 
 export default function StandingsLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);

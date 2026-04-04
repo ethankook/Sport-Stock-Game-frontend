@@ -1,18 +1,8 @@
 "use client";
 
 import { colors, positionColor } from "@/lib/theme";
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-const MOCK_HOLDINGS = [
-  { id: "1", name: "Patrick Mahomes", position: "QB", team: "KC", shares: 4, buyPrice: 820, currentPrice: 940, change: 14.6 },
-  { id: "2", name: "CeeDee Lamb", position: "WR", team: "DAL", shares: 6, buyPrice: 610, currentPrice: 580, change: -4.9 },
-  { id: "3", name: "Saquon Barkley", position: "RB", team: "PHI", shares: 3, buyPrice: 490, currentPrice: 560, change: 14.3 },
-  { id: "4", name: "Sam LaPorta", position: "TE", team: "DET", shares: 5, buyPrice: 210, currentPrice: 245, change: 16.7 },
-];
-
-const PORTFOLIO_VALUE = 14_820;
-const PORTFOLIO_CHANGE = 8.4;
-const CASH = 2_180;
+import { MOCK_HOLDINGS, PORTFOLIO_VALUE, PORTFOLIO_CHANGE, CASH } from "@/mock/portfolio";
+import type { Holding } from "@/mock/portfolio";
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: boolean }) {
@@ -59,7 +49,7 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string;
 }
 
 // ─── Holdings row ─────────────────────────────────────────────────────────────
-function HoldingRow({ holding }: { holding: typeof MOCK_HOLDINGS[0] }) {
+function HoldingRow({ holding }: { holding: Holding }) {
   const totalValue = holding.shares * holding.currentPrice;
   const gain = (holding.currentPrice - holding.buyPrice) * holding.shares;
   const isUp = holding.change >= 0;

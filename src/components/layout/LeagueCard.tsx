@@ -2,17 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { colors } from "@/lib/theme";
-
-export interface League {
-  id: string;
-  name: string;
-  memberCount: number;
-  maxMembers: number;
-  season: string;
-  yourRank?: number;
-  portfolioValue?: number;
-  portfolioChange?: number;
-}
+import type { League } from "@/types/league";
+export type { League } from "@/types/league";
 
 // Used on dashboard page -> Navigates to league-specific page
 export function LeagueCard({ league }: { league: League }) {

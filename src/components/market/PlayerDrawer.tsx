@@ -17,115 +17,47 @@ import { Button } from "@/components/ui/button";
 import { colors, positionColor } from "@/lib/theme";
 import type { Player } from "./PlayerCard";
 
-// TODO: replace with real portfolio value from user context
-const MOCK_PORTFOLIO_VALUE = 14_820;
-
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Filler);
 
-// ─── Mock weekly stats ────────────────────────────────────────────────────────
+import {
+  MOCK_PORTFOLIO_VALUE,
+  QB_STATS, RB_STATS, WR_STATS, TE_STATS,
+} from "@/mock/player-stats";
+import type { WeekStat } from "@/mock/player-stats";
 
-interface WeekStat {
-  week: number;
-  projPts: number;
-  actPts: number | null;
-  passYds?: number | null;
-  rushYds?: number | null;
-  passTDs?: number | null;
-  rushTDs?: number | null;
-  ints?: number | null;
-  fumbles?: number | null;
-  recYds?: number | null;
-  recTDs?: number | null;
-  targets?: number | null;
-  rec?: number | null;
-  tds?: number | null;
-}
+// ─── Column definitions (UI config, not data) ─────────────────────────────────
 
 interface StatCol {
   header: string;
   value: (s: WeekStat) => number | null | undefined;
 }
 
-// ─── QB ───────────────────────────────────────────────────────────────────────
-
-const QB_STATS: WeekStat[] = [
-  { week: 1, projPts: 26.1, actPts: 31.4, passYds: 312, rushYds: 18, passTDs: 3, rushTDs: 0, ints: 0, fumbles: 0 },
-  { week: 2, projPts: 24.8, actPts: 21.0, passYds: 248, rushYds: 14, passTDs: 1, rushTDs: 0, ints: 1, fumbles: 0 },
-  { week: 3, projPts: 27.3, actPts: 29.7, passYds: 291, rushYds: 22, passTDs: 2, rushTDs: 1, ints: 0, fumbles: 0 },
-  { week: 4, projPts: 23.5, actPts: 18.2, passYds: 204, rushYds: 11, passTDs: 1, rushTDs: 0, ints: 2, fumbles: 1 },
-  { week: 5, projPts: 25.9, actPts: 33.1, passYds: 338, rushYds: 19, passTDs: 3, rushTDs: 1, ints: 0, fumbles: 0 },
-  { week: 6, projPts: 22.4, actPts: 24.6, passYds: 267, rushYds: 16, passTDs: 2, rushTDs: 0, ints: 1, fumbles: 0 },
-  { week: 7, projPts: 28.0, actPts: 26.3, passYds: 279, rushYds: 20, passTDs: 2, rushTDs: 0, ints: 0, fumbles: 1 },
-  { week: 8, projPts: 24.5, actPts: null, passYds: null, rushYds: null, passTDs: null, rushTDs: null, ints: null, fumbles: null },
-];
-
 const QB_COLS: StatCol[] = [
   { header: "PsYds", value: (s) => s.passYds },
   { header: "RuYds", value: (s) => s.rushYds },
-  { header: "PsTD", value: (s) => s.passTDs },
-  { header: "RuTD", value: (s) => s.rushTDs },
-  { header: "INT", value: (s) => s.ints },
-  { header: "FUM", value: (s) => s.fumbles },
-];
-
-// ─── RB ───────────────────────────────────────────────────────────────────────
-
-const RB_STATS: WeekStat[] = [
-  { week: 1, projPts: 18.2, actPts: 22.5, rushYds: 124, recYds: 32, rushTDs: 2, recTDs: 0, fumbles: 0 },
-  { week: 2, projPts: 16.8, actPts: 14.1, rushYds: 98, recYds: 18, rushTDs: 0, recTDs: 0, fumbles: 1 },
-  { week: 3, projPts: 19.4, actPts: 25.8, rushYds: 141, recYds: 44, rushTDs: 2, recTDs: 0, fumbles: 0 },
-  { week: 4, projPts: 17.1, actPts: 11.3, rushYds: 83, recYds: 12, rushTDs: 1, recTDs: 0, fumbles: 1 },
-  { week: 5, projPts: 20.6, actPts: 28.2, rushYds: 156, recYds: 56, rushTDs: 2, recTDs: 1, fumbles: 0 },
-  { week: 6, projPts: 15.9, actPts: 18.4, rushYds: 109, recYds: 28, rushTDs: 1, recTDs: 0, fumbles: 0 },
-  { week: 7, projPts: 18.7, actPts: 20.1, rushYds: 118, recYds: 34, rushTDs: 1, recTDs: 0, fumbles: 0 },
-  { week: 8, projPts: 17.3, actPts: null, rushYds: null, recYds: null, rushTDs: null, recTDs: null, fumbles: null },
+  { header: "PsTD",  value: (s) => s.passTDs },
+  { header: "RuTD",  value: (s) => s.rushTDs },
+  { header: "INT",   value: (s) => s.ints },
+  { header: "FUM",   value: (s) => s.fumbles },
 ];
 
 const RB_COLS: StatCol[] = [
-  { header: "RuYds", value: (s) => s.rushYds },
+  { header: "RuYds",  value: (s) => s.rushYds },
   { header: "RecYds", value: (s) => s.recYds },
-  { header: "RuTD", value: (s) => s.rushTDs },
-  { header: "RecTD", value: (s) => s.recTDs },
-  { header: "FUM", value: (s) => s.fumbles },
-];
-
-// ─── WR ───────────────────────────────────────────────────────────────────────
-
-const WR_STATS: WeekStat[] = [
-  { week: 1, projPts: 15.4, actPts: 19.8, recYds: 112, targets: 8, rec: 6, tds: 1, fumbles: 0 },
-  { week: 2, projPts: 13.2, actPts: 10.5, recYds: 74, targets: 6, rec: 4, tds: 0, fumbles: 0 },
-  { week: 3, projPts: 16.8, actPts: 22.1, recYds: 138, targets: 9, rec: 7, tds: 2, fumbles: 0 },
-  { week: 4, projPts: 12.9, actPts: 8.4, recYds: 56, targets: 5, rec: 3, tds: 0, fumbles: 1 },
-  { week: 5, projPts: 17.3, actPts: 24.6, recYds: 159, targets: 10, rec: 8, tds: 2, fumbles: 0 },
-  { week: 6, projPts: 14.1, actPts: 16.2, recYds: 98, targets: 7, rec: 5, tds: 1, fumbles: 0 },
-  { week: 7, projPts: 15.7, actPts: 13.8, recYds: 88, targets: 8, rec: 5, tds: 0, fumbles: 0 },
-  { week: 8, projPts: 14.8, actPts: null, recYds: null, targets: null, rec: null, tds: null, fumbles: null },
+  { header: "RuTD",   value: (s) => s.rushTDs },
+  { header: "RecTD",  value: (s) => s.recTDs },
+  { header: "FUM",    value: (s) => s.fumbles },
 ];
 
 const WR_COLS: StatCol[] = [
   { header: "RecYds", value: (s) => s.recYds },
-  { header: "Tgt", value: (s) => s.targets },
-  { header: "Rec", value: (s) => s.rec },
-  { header: "TD", value: (s) => s.tds },
-  { header: "FUM", value: (s) => s.fumbles },
-];
-
-// ─── TE ───────────────────────────────────────────────────────────────────────
-
-const TE_STATS: WeekStat[] = [
-  { week: 1, projPts: 12.1, actPts: 16.4, recYds: 88, targets: 6, rec: 5, tds: 1, fumbles: 0 },
-  { week: 2, projPts: 10.8, actPts: 8.2, recYds: 54, targets: 5, rec: 3, tds: 0, fumbles: 0 },
-  { week: 3, projPts: 13.4, actPts: 18.9, recYds: 98, targets: 7, rec: 6, tds: 2, fumbles: 0 },
-  { week: 4, projPts: 9.6, actPts: 7.1, recYds: 44, targets: 4, rec: 3, tds: 0, fumbles: 1 },
-  { week: 5, projPts: 14.2, actPts: 20.3, recYds: 112, targets: 8, rec: 7, tds: 2, fumbles: 0 },
-  { week: 6, projPts: 11.3, actPts: 13.7, recYds: 76, targets: 6, rec: 5, tds: 1, fumbles: 0 },
-  { week: 7, projPts: 12.8, actPts: 11.4, recYds: 68, targets: 5, rec: 4, tds: 0, fumbles: 0 },
-  { week: 8, projPts: 11.9, actPts: null, recYds: null, targets: null, rec: null, tds: null, fumbles: null },
+  { header: "Tgt",    value: (s) => s.targets },
+  { header: "Rec",    value: (s) => s.rec },
+  { header: "TD",     value: (s) => s.tds },
+  { header: "FUM",    value: (s) => s.fumbles },
 ];
 
 const TE_COLS: StatCol[] = WR_COLS;
-
-// ─── Lookup ───────────────────────────────────────────────────────────────────
 
 function getStats(pos: string): WeekStat[] {
   if (pos === "RB") return RB_STATS;
@@ -218,8 +150,8 @@ export function PlayerDrawer({
           position: "fixed",
           top: 0,
           right: 0,
-          width: 460,
-          maxWidth: "90vw",
+          width: 580,
+          maxWidth: "92vw",
           height: "100vh",
           zIndex: 50,
           background: colors.surface,
@@ -326,7 +258,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
       {/* Header */}
       <div
         style={{
-          padding: "20px 22px 18px",
+          padding: "24px 28px 20px",
           borderBottom: `1px solid ${colors.border}`,
           display: "flex",
           alignItems: "flex-start",
@@ -337,7 +269,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
         <div>
           <h2
             style={{
-              fontSize: 22,
+              fontSize: 26,
               fontWeight: 800,
               color: colors.text,
               letterSpacing: "-0.02em",
@@ -369,8 +301,8 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
         <button
           onClick={onClose}
           style={{
-            width: 30,
-            height: 30,
+            width: 34,
+            height: 34,
             borderRadius: 8,
             border: `1px solid ${colors.border}`,
             background: colors.surfaceLight,
@@ -387,7 +319,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
       </div>
 
       {/* Scrollable body */}
-      <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", gap: 22, overflowY: "auto", flex: 1 }}>
+      <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 26, overflowY: "auto", flex: 1 }}>
         {/* Avatar + price */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
           <LargeAvatar name={player.name} pos={player.pos} />
@@ -406,7 +338,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
             </div>
             <div
               style={{
-                fontSize: 32,
+                fontSize: 38,
                 fontWeight: 800,
                 color: colors.text,
                 fontFamily: "var(--font-mono)",
@@ -437,7 +369,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
         {/* Price history chart */}
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: colors.text }}>Price History</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: colors.text }}>Price History</span>
             <div style={{ display: "flex", gap: 12 }}>
               {[
                 { color: colors.accent, label: "Actual" },
@@ -450,14 +382,14 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
               ))}
             </div>
           </div>
-          <div style={{ height: 140 }}>
+          <div style={{ height: 170 }}>
             <Line data={chartData} options={chartOptions} />
           </div>
         </div>
 
         {/* Season stats */}
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: colors.text, marginBottom: 10 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: colors.text, marginBottom: 10 }}>
             Season Stats
           </div>
           <div style={{ borderRadius: 10, border: `1px solid ${colors.border}`, overflow: "hidden" }}>
@@ -466,7 +398,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
               style={{
                 display: "grid",
                 gridTemplateColumns: `28px 44px 46px repeat(${cols.length}, 1fr)`,
-                padding: "7px 12px",
+                padding: "9px 16px",
                 background: colors.surfaceLight,
                 borderBottom: `1px solid ${colors.border}`,
               }}
@@ -498,7 +430,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
                   style={{
                     display: "grid",
                     gridTemplateColumns: `28px 44px 46px repeat(${cols.length}, 1fr)`,
-                    padding: "7px 12px",
+                    padding: "9px 16px",
                     borderBottom: i < stats.length - 1 ? `1px solid ${colors.border}` : "none",
                     background: i % 2 === 0 ? "transparent" : `${colors.bg}60`,
                     alignItems: "center",
@@ -527,7 +459,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
       {/* Buy footer */}
       <div
         style={{
-          padding: "18px 22px",
+          padding: "20px 28px",
           borderTop: `1px solid ${colors.border}`,
           flexShrink: 0,
           display: "flex",
@@ -590,7 +522,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
             </div>
             <div
               style={{
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: 800,
                 color: shares > 0 ? colors.accent : colors.textMuted,
                 fontFamily: "var(--font-mono)",
@@ -683,7 +615,7 @@ function DrawerBody({ player, onClose }: { player: Player; onClose: () => void }
             fontSize: 14,
             borderRadius: 10,
             border: "none",
-            height: 42,
+            height: 48,
             cursor: shares > 0 ? "pointer" : "not-allowed",
             transition: "background 0.15s, color 0.15s",
           }}
@@ -713,7 +645,7 @@ function Cell({
   return (
     <div
       style={{
-        fontSize: 11,
+        fontSize: 12,
         fontFamily: "var(--font-mono)",
         textAlign: "right",
         fontWeight: bold ? 700 : 400,

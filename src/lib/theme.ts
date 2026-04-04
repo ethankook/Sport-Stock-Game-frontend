@@ -14,6 +14,7 @@ export const colors = {
     posRB: "#36d8b7",
     posWR: "#5ba8ff",
     posTE: "#c4a0ff",
+    posK: "#ffb86c",
     gold: "#f5c542",
     error: "rgba(239,68,68,0.9)",
 } as const;
@@ -24,6 +25,7 @@ export function positionColor(pos: string): string {
         case "RB": return colors.posRB;
         case "WR": return colors.posWR;
         case "TE": return colors.posTE;
+        case "K": return colors.posK;
         default: return colors.textMuted;
     }
 }

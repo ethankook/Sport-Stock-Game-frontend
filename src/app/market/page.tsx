@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { GameCard } from "@/components/market/GameCard";
 import { PlayerCard, type Player } from "@/components/market/PlayerCard";
 import { PlayerDrawer } from "@/components/market/PlayerDrawer";
-import { MOCK_GAMES, MOCK_PLAYERS } from "./data";
+import { MOCK_GAMES, MOCK_PLAYERS } from "@/mock";
 import { colors } from "@/lib/theme";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

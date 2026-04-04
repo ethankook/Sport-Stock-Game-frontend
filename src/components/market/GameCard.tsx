@@ -3,16 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { colors } from "@/lib/theme";
-
-export interface Game {
-  id: string;
-  day: string;
-  time: string;
-  home: { name: string; abbr: string; record: string };
-  away: { name: string; abbr: string; record: string };
-  moneyline: { home: number; away: number };
-  status: "upcoming" | "live" | "final";
-}
+import type { Game } from "@/types/market";
+export type { Game } from "@/types/market";
 
 function formatOdds(odds: number): string {
   return odds > 0 ? `+${odds}` : `${odds}`;

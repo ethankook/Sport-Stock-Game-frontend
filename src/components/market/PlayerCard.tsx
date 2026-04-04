@@ -3,18 +3,8 @@
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { colors, positionColor } from "@/lib/theme";
-
-export interface Player {
-  id: string;
-  name: string;
-  pos: string;
-  team: string;
-  number: number;
-  price: number;
-  change: number;
-  volume: number;
-  mktCap: number;
-}
+import type { Player } from "@/types/market";
+export type { Player } from "@/types/market";
 
 function PlayerAvatar({ name, pos }: { name: string; pos: string }) {
   const posCol = positionColor(pos);
